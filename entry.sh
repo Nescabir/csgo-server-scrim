@@ -12,13 +12,15 @@ if [ ! -f "${STEAMAPPDIR}/${STEAMAPP}/cfg/sourcemod/get5.cfg" ];
 		mkdir -p "${STEAMAPPDIR}/${STEAMAPP}/cfg"
 		cp -a "${HOMEDIR}/esl_configs/"*.cfg "${STEAMAPPDIR}/${STEAMAPP}/cfg/"
 
-		# Download metamod
+		# Download metamod (32-bit CS:GO server – remove linux64 so engine loads bin/ only)
 		LATESTMM=$(wget -qO- https://mms.alliedmods.net/mmsdrop/"${METAMOD_VERSION}"/mmsource-latest-linux)
-		wget -qO- https://mms.alliedmods.net/mmsdrop/"${METAMOD_VERSION}"/"${LATESTMM}" | tar xvzf - -C "${STEAMAPPDIR}/${STEAMAPP}"	
+		wget -qO- https://mms.alliedmods.net/mmsdrop/"${METAMOD_VERSION}"/"${LATESTMM}" | tar xvzf - -C "${STEAMAPPDIR}/${STEAMAPP}"
+		rm -rf "${STEAMAPPDIR}/${STEAMAPP}/addons/metamod/bin/linux64"
 
-		# Download sourcemod
+		# Download sourcemod (same: 32-bit server, remove linux64)
 		LATESTSM=$(wget -qO- https://sm.alliedmods.net/smdrop/"${SOURCEMOD_VERSION}"/sourcemod-latest-linux)
 		wget -qO- https://sm.alliedmods.net/smdrop/"${SOURCEMOD_VERSION}"/"${LATESTSM}" | tar xvzf - -C "${STEAMAPPDIR}/${STEAMAPP}"
+		rm -rf "${STEAMAPPDIR}/${STEAMAPP}/addons/sourcemod/bin/linux64"
 
 		# Download get5
 		wget -O latest-get5.zip https://github.com/splewis/get5/releases/download/v0.15.0/get5-v0.15.0.zip
@@ -51,6 +53,9 @@ else
 	sed -i -e 's/get5_check_auths "0"/get5_check_auths "1"/g' "${STEAMAPPDIR}/${STEAMAPP}/cfg/sourcemod/get5.cfg"
 	sed -i -e 's/get5_kick_when_no_match_loaded "0"/get5_kick_when_no_match_loaded "1"/g' "${STEAMAPPDIR}/${STEAMAPP}/cfg/sourcemod/get5.cfg"
 fi
+
+# CS:GO dedicated server is 32-bit – remove 64-bit addon bins so engine loads 32-bit (fixes "wrong ELF class: ELFCLASS64")
+rm -rf "${STEAMAPPDIR}/${STEAMAPP}/addons/metamod/bin/linux64" "${STEAMAPPDIR}/${STEAMAPP}/addons/sourcemod/bin/linux64" 2>/dev/null || true
 
 # Believe it or not, if you don't do this srcds_run shits itself
 cd ${STEAMAPPDIR}

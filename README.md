@@ -56,6 +56,8 @@ Build-time (optional, use Coolify “Build Variables” if needed):
 | `METAMOD_VERSION` | 1.12 |
 | `SOURCEMOD_VERSION` | 1.12 |
 
+**Steam App ID:** This image uses **740** (CS:GO dedicated server). App ID 730 is the CS:GO/CS2 client; the server is a separate tool (740). If you can’t connect, check: `SRCDS_TOKEN` is set and valid, the server is in the server browser or use “Connect” with the server’s IP and port (e.g. `connect <ip>:27015`), and that your firewall allows the game port (default 27015 UDP/TCP).
+
 ## Coolify (PaaS)
 The `docker-compose.yml` is written so Coolify can override settings without editing the file:
 

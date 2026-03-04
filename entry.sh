@@ -20,7 +20,7 @@ if [ ! -f "${STEAMAPPDIR}/${STEAMAPP}/cfg/sourcemod/get5.cfg" ];
 		wget -qO- https://sm.alliedmods.net/smdrop/"${SOURCEMOD_VERSION}"/"${LATESTSM}" | tar xvzf - -C "${STEAMAPPDIR}/${STEAMAPP}"
 
 		# Download get5
-		wget -O latest-get5.zip https://github.com/splewis/get5/releases/download/0.7.2/get5_0.7.2.zip
+		wget -O latest-get5.zip https://github.com/splewis/get5/releases/download/v0.15.0/get5-v0.15.0.zip
 		unzip latest-get5.zip -d "${STEAMAPPDIR}/${STEAMAPP}/"
 		cp -r "${STEAMAPPDIR}/${STEAMAPP}/get5"/* "${STEAMAPPDIR}/${STEAMAPP}/"
 		chmod -R 777 "${STEAMAPPDIR}/${STEAMAPP}/"

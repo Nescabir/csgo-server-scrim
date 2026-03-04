@@ -15,6 +15,7 @@ ENV SOURCEMOD_VERSION=${SOURCEMOD_VERSION}
 
 # Copy across template config, ESL configs, and entry script
 COPY entry.sh ${HOMEDIR}/entry.sh
+COPY docker-entrypoint.sh ${HOMEDIR}/docker-entrypoint.sh
 COPY custom_server_template.cfg ${HOMEDIR}/custom_server_template.cfg
 COPY structured_match_config.cfg ${HOMEDIR}/structured_match_config.cfg
 COPY scrim_match_config.cfg ${HOMEDIR}/scrim_match_config.cfg
@@ -35,13 +36,13 @@ RUN set -x \
 	&& { \
 		echo '@ShutdownOnFailedCommand 1'; \
 		echo '@NoPromptForPassword 1'; \
-		echo 'login anonymous'; \
 		echo 'force_install_dir '"${STEAMAPPDIR}"''; \
+		echo 'login anonymous'; \
 		echo 'app_update '"${STEAMAPPID}"''; \
 		echo 'quit'; \
 	   } > "${HOMEDIR}/${STEAMAPP}_update.txt" \
-	&& chmod +x "${HOMEDIR}/entry.sh" \
-	&& chown -R "${USER}:${USER}" "${HOMEDIR}/entry.sh" "${HOMEDIR}/get5_configs" "${HOMEDIR}/esl_configs" "${HOMEDIR}/custom_server_template.cfg" "${HOMEDIR}/structured_match_config.cfg" "${HOMEDIR}/scrim_match_config.cfg" "${STEAMAPPDIR}" "${HOMEDIR}/${STEAMAPP}_update.txt" \
+	&& chmod +x "${HOMEDIR}/entry.sh" "${HOMEDIR}/docker-entrypoint.sh" \
+	&& chown -R "${USER}:${USER}" "${HOMEDIR}/entry.sh" "${HOMEDIR}/docker-entrypoint.sh" "${HOMEDIR}/get5_configs" "${HOMEDIR}/esl_configs" "${HOMEDIR}/custom_server_template.cfg" "${HOMEDIR}/structured_match_config.cfg" "${STEAMAPPDIR}" "${HOMEDIR}/${STEAMAPP}_update.txt" \
 	&& rm -rf /var/lib/apt/lists/*
 
 ENV SRCDS_PORT=27015 \
@@ -54,10 +55,10 @@ EXPOSE 27015/tcp \
 	27015/udp \
 	27020/udp
 
-USER ${USER}
-
 VOLUME ${STEAMAPPDIR}
 
 WORKDIR ${HOMEDIR}
 
-CMD ["bash", "entry.sh"]
+# Run as root so entrypoint can chown the volume; it then drops to steam for entry.sh
+USER root
+CMD ["bash", "-c", "exec bash \"${HOMEDIR}/docker-entrypoint.sh\""]

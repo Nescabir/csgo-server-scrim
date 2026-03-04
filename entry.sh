@@ -55,6 +55,11 @@ fi
 # Believe it or not, if you don't do this srcds_run shits itself
 cd ${STEAMAPPDIR}
 
+# Use system lib32 libgcc (has GCC_7.0.0); game's bundled libgcc_s.so.1 is older and causes "version GCC_7.0.0 not found"
+if [ -f "${STEAMAPPDIR}/${STEAMAPP}/bin/libgcc_s.so.1" ]; then
+	rm -f "${STEAMAPPDIR}/${STEAMAPP}/bin/libgcc_s.so.1"
+fi
+
 bash "${STEAMAPPDIR}/srcds_run" -game "${STEAMAPP}" -console -autoupdate \
 			-steam_dir "${STEAMCMDDIR}" \
 			-steamcmd_script "${HOMEDIR}/${STEAMAPP}_update.txt" \

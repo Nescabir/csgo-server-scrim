@@ -31,6 +31,8 @@ RUN set -x \
 		wget \
 		ca-certificates \
 		lib32z1 \
+		lib32stdc++6 \
+		lib32gcc-s1 \
 		unzip \
 	&& mkdir -p "${STEAMAPPDIR}" \
 	&& { \

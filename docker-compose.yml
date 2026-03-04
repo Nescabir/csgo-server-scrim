@@ -1,12 +1,18 @@
+# Coolify: set env vars in the UI; use Build Variables for METAMOD_VERSION / SOURCEMOD_VERSION if needed
 version: "3"
-services: 
+services:
   csgo-scrim:
-    build: .
-    volumes: 
-      - ./csgo-data:/home/steam/csgo-dedicated/
+    build:
+      context: .
+      args:
+        - METAMOD_VERSION=${METAMOD_VERSION:-1.12}
+        - SOURCEMOD_VERSION=${SOURCEMOD_VERSION:-1.12}
+    volumes:
+      - ${CSGO_DATA_PATH:-./csgo-data}:/home/steam/csgo-dedicated/
     network_mode: "host"
-    environment: 
-      - SRCDS_TOKEN=309E76122D3C7522154AC7513C51984E
-      - SRCDS_PORT=27015
-      - SRCDS_TV_PORT=27020
-      - SCRIM=true # Set false for a team structured config
+    environment:
+      - SRCDS_TOKEN=${SRCDS_TOKEN}
+      - SRCDS_PORT=${SRCDS_PORT:-27015}
+      - SRCDS_TV_PORT=${SRCDS_TV_PORT:-27020}
+      - SRCDS_CLIENT_PORT=${SRCDS_CLIENT_PORT:-27005}
+      - SCRIM=${SCRIM:-true}

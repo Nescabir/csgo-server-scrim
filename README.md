@@ -14,8 +14,8 @@ $ mkdir -p $(pwd)/csgo-data
 $ chmod 777 $(pwd)/csgo-data # Makes sure the directory is writeable by the unprivileged container user
 ```
 
-**Make necessary edits to both the docker-compose.yml and custom_server_template.cfg.**
-**Look at configuration section below for guidance.**
+**Set `SRCDS_TOKEN` (required) and any other options via environment variables or by editing docker-compose.**
+**Edit custom_server_template.cfg for server hostname, passwords, etc.**
 
 Run docker-compose up:<br/>
 ```console
@@ -38,17 +38,32 @@ $ docker exec -it *CONTAINER_NAME* nano /home/steam/custom_server_template.cfg
 ```
 
 ## Environment Variables
-You can overwrite these values within the docker-compose file, below are the defaults: 
-```dockerfile
-SRCDS_PORT=27015 
-SRCDS_TV_PORT=27020 
-SRCDS_CLIENT_PORT=27005 
-SRCDS_TOKEN=0 
-METAMOD_VERSION=1.10 
-SOURCEMOD_VERSION=1.10
-```
-**If you edit the ports you will need to adjust these within the docker-compose file also.**
-## Additional config (to-do)
-The image also contains a copy of the official ESL config files from [here](https://play.eslgaming.com/download/26251762/). You will need to disable the Get5 plugin however (to-do)
+Configure these in your environment or in Coolify’s UI (see below). Defaults:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `SRCDS_TOKEN` | *(required)* | Steam Game Server Account token |
+| `SRCDS_PORT` | 27015 | Game port |
+| `SRCDS_TV_PORT` | 27020 | GOTV port |
+| `SRCDS_CLIENT_PORT` | 27005 | Client port |
+| `SCRIM` | true | `true` = scrim (no auth), `false` = structured match |
+| `CSGO_DATA_PATH` | ./csgo-data | Host path for game data (Coolify: set to your volume path if needed) |
+
+Build-time (optional, use Coolify “Build Variables” if needed):
+
+| Variable | Default |
+|----------|---------|
+| `METAMOD_VERSION` | 1.12 |
+| `SOURCEMOD_VERSION` | 1.12 |
+
+## Coolify (PaaS)
+The `docker-compose.yml` is written so Coolify can override settings without editing the file:
+
+- **Environment variables:** In your Coolify service, set `SRCDS_TOKEN` (required), `SRCDS_PORT`, `SRCDS_TV_PORT`, `SCRIM`, etc. They are passed through as-is.
+- **Build variables:** To pin Metamod/Sourcemod versions at build time, set `METAMOD_VERSION` and/or `SOURCEMOD_VERSION` in Coolify’s build configuration.
+- **Data volume:** If Coolify uses a different path for persistent storage, set `CSGO_DATA_PATH` to that path so the compose volume points to it.
+
+## ESL configs
+The image uses the bundled configs in `esl_configs/` (e.g. `server.cfg`, `esl5on5.cfg`, `eslgotv.cfg`) as the base cfg layout on first run. The deprecated download URL is no longer used. Your `custom_server_template.cfg` still overwrites `server.cfg` so your hostname, passwords, and other settings take effect.
 
 If you want to learn more about configuring a CS:GO server check this [documentation](https://developer.valvesoftware.com/wiki/Counter-Strike:_Global_Offensive_Dedicated_Servers#Advanced_Configuration).

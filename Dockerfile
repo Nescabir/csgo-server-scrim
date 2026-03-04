@@ -7,12 +7,19 @@ ENV STEAMAPPID 740
 ENV STEAMAPP csgo
 ENV STEAMAPPDIR "${HOMEDIR}/${STEAMAPP}-dedicated"
 
-# Copy across template config and entry script
+# Build args (Coolify "Build Variables") – defaults used if not set
+ARG METAMOD_VERSION=1.12
+ARG SOURCEMOD_VERSION=1.12
+ENV METAMOD_VERSION=${METAMOD_VERSION}
+ENV SOURCEMOD_VERSION=${SOURCEMOD_VERSION}
+
+# Copy across template config, ESL configs, and entry script
 COPY entry.sh ${HOMEDIR}/entry.sh
 COPY custom_server_template.cfg ${HOMEDIR}/custom_server_template.cfg
 COPY structured_match_config.cfg ${HOMEDIR}/structured_match_config.cfg
 COPY scrim_match_config.cfg ${HOMEDIR}/scrim_match_config.cfg
 COPY get5_configs ${HOMEDIR}/get5_configs
+COPY esl_configs ${HOMEDIR}/esl_configs
 
 # Create autoupdate config
 # Add entry script & ESL config
@@ -34,15 +41,13 @@ RUN set -x \
 		echo 'quit'; \
 	   } > "${HOMEDIR}/${STEAMAPP}_update.txt" \
 	&& chmod +x "${HOMEDIR}/entry.sh" \
-	&& chown -R "${USER}:${USER}" "${HOMEDIR}/entry.sh" "${HOMEDIR}/get5_configs" "${HOMEDIR}/custom_server_template.cfg" "${HOMEDIR}/structured_match_config.cfg" "${HOMEDIR}/scrim_match_config.cfg" "${STEAMAPPDIR}" "${HOMEDIR}/${STEAMAPP}_update.txt" \
+	&& chown -R "${USER}:${USER}" "${HOMEDIR}/entry.sh" "${HOMEDIR}/get5_configs" "${HOMEDIR}/esl_configs" "${HOMEDIR}/custom_server_template.cfg" "${HOMEDIR}/structured_match_config.cfg" "${HOMEDIR}/scrim_match_config.cfg" "${STEAMAPPDIR}" "${HOMEDIR}/${STEAMAPP}_update.txt" \
 	&& rm -rf /var/lib/apt/lists/*
 
 ENV SRCDS_PORT=27015 \
 	SRCDS_TV_PORT=27020 \
 	SRCDS_CLIENT_PORT=27005 \
-	SRCDS_TOKEN=0 \
-	METAMOD_VERSION=1.12 \
-	SOURCEMOD_VERSION=1.12
+	SRCDS_TOKEN=0
 
 # Expose ports
 EXPOSE 27015/tcp \

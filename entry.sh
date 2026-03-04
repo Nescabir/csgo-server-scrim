@@ -8,9 +8,10 @@ bash "${STEAMCMDDIR}/steamcmd.sh" +login anonymous \
 # We assume that if the Get5 config is missing, that this is a fresh container
 if [ ! -f "${STEAMAPPDIR}/${STEAMAPP}/cfg/sourcemod/get5.cfg" ];
 	then
-		# Download & extract the config
-		wget -qO- "${DLURL}/master/etc/cfg.tar.gz" | tar xvzf - -C "${STEAMAPPDIR}/${STEAMAPP}"
-		
+		# Base cfg layout from bundled ESL configs (replaces deprecated cfg.tar.gz download)
+		mkdir -p "${STEAMAPPDIR}/${STEAMAPP}/cfg"
+		cp -a "${HOMEDIR}/esl_configs/"*.cfg "${STEAMAPPDIR}/${STEAMAPP}/cfg/"
+
 		# Download metamod
 		LATESTMM=$(wget -qO- https://mms.alliedmods.net/mmsdrop/"${METAMOD_VERSION}"/mmsource-latest-linux)
 		wget -qO- https://mms.alliedmods.net/mmsdrop/"${METAMOD_VERSION}"/"${LATESTMM}" | tar xvzf - -C "${STEAMAPPDIR}/${STEAMAPP}"	
@@ -26,6 +27,11 @@ if [ ! -f "${STEAMAPPDIR}/${STEAMAPP}/cfg/sourcemod/get5.cfg" ];
 		chmod -R 777 "${STEAMAPPDIR}/${STEAMAPP}/"
 		rm -rf latest-get5.zip "${STEAMAPPDIR}/${STEAMAPP}/get5/"
 
+		# Ensure target directories exist before copying (fix missing dirs on first run)
+		mkdir -p "${STEAMAPPDIR}/${STEAMAPP}/cfg" \
+			"${STEAMAPPDIR}/${STEAMAPP}/cfg/get5" \
+			"${STEAMAPPDIR}/${STEAMAPP}/addons/sourcemod/configs/get5"
+
 		# Replace current server.cfg with template file
 		cp -r custom_server_template.cfg "${STEAMAPPDIR}/${STEAMAPP}/cfg/server.cfg"
 		cp -r structured_match_config.cfg "${STEAMAPPDIR}/${STEAMAPP}/cfg/match.cfg"
@@ -33,7 +39,7 @@ if [ ! -f "${STEAMAPPDIR}/${STEAMAPP}/cfg/sourcemod/get5.cfg" ];
 		cp -a get5_configs/. "${STEAMAPPDIR}/${STEAMAPP}/cfg/get5/"
 fi
 
-if [ $SCRIM == 'true' ]
+if [ "${SCRIM:-true}" = 'true' ]
 then
     echo "Configuring server for SCRIM setup"
 	# Alter values in Get5 config to be configured for scrim

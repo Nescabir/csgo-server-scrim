@@ -28,6 +28,8 @@ services:
       - SRCDS_RCONPW=${SRCDS_RCONPW:-changeme}
       - SRCDS_PW=${SRCDS_PW:-changeme}
       - SRCDS_NET_PUBLIC_ADDRESS=${SRCDS_NET_PUBLIC_ADDRESS:-0}
+      # With port mapping, bind to 0 so the server listens on all container interfaces (do not set to your public IP or you get "Cannot assign requested address")
+      - SRCDS_IP=0
       - SRCDS_LAN=${SRCDS_LAN:-0}
       - SRCDS_HOSTNAME=${SRCDS_HOSTNAME:-CS:GO Server}
       - SRCDS_STARTMAP=${SRCDS_STARTMAP:-de_mirage}

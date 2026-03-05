@@ -89,7 +89,7 @@ The stack uses **port mapping** (no `network_mode: host`). Expose these ports in
 | **27005** | UDP | Client port | `-clientport` |
 | **26900** | UDP | Steam (outgoing) | `-sport` |
 
-In Coolify, open the service’s **Ports** / **Exposed Ports** and add the four entries above (or use the same numbers if you changed them via `SRCDS_PORT`, `SRCDS_TV_PORT`, `SRCDS_CLIENT_PORT`, `SRCDS_STEAM_PORT`). The compose file maps `${SRCDS_PORT:-27015}:${SRCDS_PORT:-27015}` etc., so if you override a port via env, ensure the same port is exposed in Coolify. With port mapping you **must** set `SRCDS_NET_PUBLIC_ADDRESS` to your server’s public IP so Steam and clients can connect.
+In Coolify, open the service’s **Ports** / **Exposed Ports** and add the four entries above (or use the same numbers if you changed them via `SRCDS_PORT`, `SRCDS_TV_PORT`, `SRCDS_CLIENT_PORT`, `SRCDS_STEAM_PORT`). The compose file maps `${SRCDS_PORT:-27015}:${SRCDS_PORT:-27015}` etc., so if you override a port via env, ensure the same port is exposed in Coolify. With port mapping you **must** set `SRCDS_NET_PUBLIC_ADDRESS` to your server’s public IP so Steam and clients can connect. Leave **`SRCDS_IP`** at **0** (default in this stack) so the server binds to all interfaces in the container; setting it to a specific IP (e.g. your public IP) causes `NET_OpenSocket: bind: Cannot assign requested address` because that IP does not exist inside the container.
 
 ## ESL configs
 The image uses the bundled configs in `esl_configs/` (e.g. `server.cfg`, `esl5on5.cfg`, `eslgotv.cfg`) as the base cfg layout on first run. The deprecated download URL is no longer used. Your `custom_server_template.cfg` still overwrites `server.cfg` so your hostname, passwords, and other settings take effect.

@@ -33,6 +33,7 @@ RUN set -x \
 		lib32z1 \
 		lib32stdc++6 \
 		lib32gcc-s1 \
+		gcc-multilib \
 		unzip \
 	&& mkdir -p "${STEAMAPPDIR}" \
 	&& { \

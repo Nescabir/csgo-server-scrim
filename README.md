@@ -42,12 +42,24 @@ Configure these in your environment or in Coolify’s UI (see below). Defaults:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `SRCDS_TOKEN` | *(required)* | Steam Game Server Account token |
+| `SRCDS_TOKEN` | *(required)* | Steam Game Server Account token (use **App ID 4465480** at [managegameservers](https://steamcommunity.com/dev/managegameservers)) |
 | `SRCDS_PORT` | 27015 | Game port |
 | `SRCDS_TV_PORT` | 27020 | GOTV port |
 | `SRCDS_CLIENT_PORT` | 27005 | Client port |
+| `SRCDS_RCONPW` | changeme | RCON password |
+| `SRCDS_PW` | changeme | Server password (empty = no password) |
+| `SRCDS_NET_PUBLIC_ADDRESS` | 0 | Public IP for server browser (0 = auto) |
+| `SRCDS_LAN` | 0 | `0` = internet, `1` = LAN only |
+| `SRCDS_HOSTNAME` | CS:GO Server | Server name in browser |
+| `SRCDS_STARTMAP` | de_mirage | Map to start on |
+| `SRCDS_FPSMAX` | 300 | Max FPS |
+| `SRCDS_TICKRATE` | 128 | Server tickrate |
+| `SRCDS_MAXPLAYERS` | 14 | Max players |
+| `SRCDS_REGION` | 3 | Server region (e.g. 3 = EU) |
 | `SCRIM` | true | `true` = scrim (no auth), `false` = structured match |
 | `CSGO_DATA_PATH` | ./csgo-data | Host path for game data (Coolify: set to your volume path if needed) |
+
+These are passed as command-line args to `srcds_run` (like [CM2Walki/CSGO](https://github.com/CM2Walki/CSGO)), so they override `server.cfg` and fix issues like `sv_lan` not being applied.
 
 Build-time (optional, use Coolify “Build Variables” if needed):
 
@@ -56,7 +68,7 @@ Build-time (optional, use Coolify “Build Variables” if needed):
 | `METAMOD_VERSION` | 1.12 |
 | `SOURCEMOD_VERSION` | 1.12 |
 
-**Steam App ID:** This image uses **740** (CS:GO dedicated server). App ID 730 is the CS:GO/CS2 client; the server is a separate tool (740). If you can’t connect, check: `SRCDS_TOKEN` is set and valid, the server is in the server browser or use “Connect” with the server’s IP and port (e.g. `connect <ip>:27015`), and that your firewall allows the game port (default 27015 UDP/TCP).
+**Steam / GLST:** Server files use app ID **740** (CS:GO dedicated server). For the Game Server Login Token, use **App ID 4465480** when creating your token at [Steam Game Server Account Management](https://steamcommunity.com/dev/managegameservers). If you can’t connect, check the token is set and valid, and use `connect <ip>:27015` or the server browser; ensure the firewall allows the game port.
 
 ## Coolify (PaaS)
 The `docker-compose.yml` is written so Coolify can override settings without editing the file:

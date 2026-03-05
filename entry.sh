@@ -65,24 +65,29 @@ if [ -f "${STEAMAPPDIR}/${STEAMAPP}/bin/libgcc_s.so.1" ]; then
 	rm -f "${STEAMAPPDIR}/${STEAMAPP}/bin/libgcc_s.so.1"
 fi
 
+# Pass SRCDS_* env vars on command line so they override server.cfg (like CM2Walki/CSGO)
 bash "${STEAMAPPDIR}/srcds_run" -game "${STEAMAPP}" -console -autoupdate \
 			-steam_dir "${STEAMCMDDIR}" \
 			-steamcmd_script "${HOMEDIR}/${STEAMAPP}_update.txt" \
 			-usercon \
-			+fps_max "300" \
-			-tickrate "128" \
+			+fps_max "${SRCDS_FPSMAX:-300}" \
+			+tickrate "${SRCDS_TICKRATE:-128}" \
 			-port "${SRCDS_PORT}" \
 			+tv_port "${SRCDS_TV_PORT}" \
 			+clientport "${SRCDS_CLIENT_PORT}" \
-			-maxplayers_override "14" \
-			+game_type "0" \
-			+game_mode "1" \
-			+mapgroup "mg_active" \
-			+map "de_mirage" \
-			+sv_region "3" \
-			+net_public_adr "0" \
-			-ip "0" \
-			+host_workshop_collection "0" \
-			+workshop_start_map "0" \
-			-authkey "" \
+			-maxplayers_override "${SRCDS_MAXPLAYERS:-14}" \
+			+game_type "${SRCDS_GAMETYPE:-0}" \
+			+game_mode "${SRCDS_GAMEMODE:-1}" \
+			+mapgroup "${SRCDS_MAPGROUP:-mg_active}" \
+			+map "${SRCDS_STARTMAP:-de_mirage}" \
+			+sv_region "${SRCDS_REGION:-3}" \
+			+net_public_adr "${SRCDS_NET_PUBLIC_ADDRESS:-0}" \
+			-ip "${SRCDS_IP:-0}" \
+			+sv_lan "${SRCDS_LAN:-0}" \
+			+hostname "${SRCDS_HOSTNAME:-CS:GO Server}" \
+			+rcon_password "${SRCDS_RCONPW:-}" \
+			+sv_password "${SRCDS_PW:-}" \
+			+host_workshop_collection "${SRCDS_HOST_WORKSHOP_COLLECTION:-0}" \
+			+workshop_start_map "${SRCDS_WORKSHOP_START_MAP:-0}" \
+			-authkey "${SRCDS_WORKSHOP_AUTHKEY:-}" \
 			+sv_setsteamaccount "${SRCDS_TOKEN}"

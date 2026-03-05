@@ -61,8 +61,12 @@ rm -rf "${STEAMAPPDIR}/${STEAMAPP}/addons/metamod/bin/linux64" "${STEAMAPPDIR}/$
 cd ${STEAMAPPDIR}
 
 # Use system lib32 libgcc (has GCC_7.0.0); game's bundled libgcc_s.so.1 is older and causes "version GCC_7.0.0 not found"
-if [ -f "${STEAMAPPDIR}/${STEAMAPP}/bin/libgcc_s.so.1" ]; then
-	rm -f "${STEAMAPPDIR}/${STEAMAPP}/bin/libgcc_s.so.1"
+# LD_LIBRARY_PATH has STEAMAPPDIR/bin first, then STEAMAPPDIR – remove both possible locations
+rm -f "${STEAMAPPDIR}/bin/libgcc_s.so.1" "${STEAMAPPDIR}/${STEAMAPP}/bin/libgcc_s.so.1" 2>/dev/null || true
+
+# VAC / Steam auth: token must be set and created with App ID 4465480; set SRCDS_NET_PUBLIC_ADDRESS to your server's public IP if behind NAT/Docker so Steam and clients can connect
+if [ -z "${SRCDS_TOKEN}" ] || [ "${SRCDS_TOKEN}" = "0" ]; then
+	echo "WARNING: SRCDS_TOKEN is not set or is 0 - server will not be VAC secured and may not be joinable. Create a token at https://steamcommunity.com/dev/managegameservers with App ID 4465480 and set SRCDS_NET_PUBLIC_ADDRESS to this server's public IP if behind NAT."
 fi
 
 # Pass SRCDS_* env vars on command line so they override server.cfg (like CM2Walki/CSGO)

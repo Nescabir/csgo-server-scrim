@@ -80,4 +80,23 @@ The `docker-compose.yml` is written so Coolify can override settings without edi
 ## ESL configs
 The image uses the bundled configs in `esl_configs/` (e.g. `server.cfg`, `esl5on5.cfg`, `eslgotv.cfg`) as the base cfg layout on first run. The deprecated download URL is no longer used. Your `custom_server_template.cfg` still overwrites `server.cfg` so your hostname, passwords, and other settings take effect.
 
+## Troubleshooting: "Initializing Steam libraries", not VAC secured, or unjoinable
+
+If the server appears in the browser but stays on "Initializing Steam libraries for secure Internet server", never becomes **VAC secured**, or is **unjoinable** in-game:
+
+1. **Token**
+   - Create the token at [Steam Game Server Account Management](https://steamcommunity.com/dev/managegameservers) using **App ID 4465480** (not 730 or 740).
+   - Set `SRCDS_TOKEN` to that token in your environment (e.g. Coolify env vars). No spaces or quotes in the token value.
+
+2. **Public IP (important for Docker/NAT/Coolify)**
+   - Set **`SRCDS_NET_PUBLIC_ADDRESS`** to your server’s **public IP** (the IP players use to connect). If it’s `0` or unset, the server may report the wrong address to Steam and never finish auth or be unjoinable.
+   - Example: `SRCDS_NET_PUBLIC_ADDRESS=203.0.113.10` (replace with your host’s public IP).
+
+3. **Network**
+   - **Outbound:** The server must reach Steam (e.g. outbound to Steam’s servers). If the host or Coolify blocks outbound traffic, Steam auth will hang.
+   - **Inbound:** Open your game port (default **27015** UDP and TCP) on the host/firewall and point it at the container/host so players can connect.
+
+4. **Restart**
+   - After changing `SRCDS_TOKEN` or `SRCDS_NET_PUBLIC_ADDRESS`, restart the container so the new values are used at startup.
+
 If you want to learn more about configuring a CS:GO server check this [documentation](https://developer.valvesoftware.com/wiki/Counter-Strike:_Global_Offensive_Dedicated_Servers#Advanced_Configuration).

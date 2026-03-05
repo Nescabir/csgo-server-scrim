@@ -46,6 +46,7 @@ Configure these in your environment or in Coolify’s UI (see below). Defaults:
 | `SRCDS_PORT` | 27015 | Game port |
 | `SRCDS_TV_PORT` | 27020 | GOTV port |
 | `SRCDS_CLIENT_PORT` | 27005 | Client port |
+| `SRCDS_STEAM_PORT` | 26900 | Steam port (outgoing) |
 | `SRCDS_RCONPW` | changeme | RCON password |
 | `SRCDS_PW` | changeme | Server password (empty = no password) |
 | `SRCDS_NET_PUBLIC_ADDRESS` | 0 | Public IP for server browser (0 = auto) |
@@ -76,6 +77,19 @@ The `docker-compose.yml` is written so Coolify can override settings without edi
 - **Environment variables:** In your Coolify service, set `SRCDS_TOKEN` (required), `SRCDS_PORT`, `SRCDS_TV_PORT`, `SCRIM`, etc. They are passed through as-is.
 - **Build variables:** To pin Metamod/Sourcemod versions at build time, set `METAMOD_VERSION` and/or `SOURCEMOD_VERSION` in Coolify’s build configuration.
 - **Data volume:** If Coolify uses a different path for persistent storage, set `CSGO_DATA_PATH` to that path so the compose volume points to it.
+
+### Port mapping in Coolify
+
+The stack uses **port mapping** (no `network_mode: host`). Expose these ports in Coolify so the host forwards traffic to the container:
+
+| Port  | Protocol | Purpose | Startup flag |
+|-------|----------|---------|----------------|
+| **27015** | TCP + UDP | Game (transmission, pings, RCON) | `-port` |
+| **27020** | UDP | SourceTV (GOTV) | `+tv_port` |
+| **27005** | UDP | Client port | `-clientport` |
+| **26900** | UDP | Steam (outgoing) | `-sport` |
+
+In Coolify, open the service’s **Ports** / **Exposed Ports** and add the four entries above (or use the same numbers if you changed them via `SRCDS_PORT`, `SRCDS_TV_PORT`, `SRCDS_CLIENT_PORT`, `SRCDS_STEAM_PORT`). The compose file maps `${SRCDS_PORT:-27015}:${SRCDS_PORT:-27015}` etc., so if you override a port via env, ensure the same port is exposed in Coolify. With port mapping you **must** set `SRCDS_NET_PUBLIC_ADDRESS` to your server’s public IP so Steam and clients can connect.
 
 ## ESL configs
 The image uses the bundled configs in `esl_configs/` (e.g. `server.cfg`, `esl5on5.cfg`, `eslgotv.cfg`) as the base cfg layout on first run. The deprecated download URL is no longer used. Your `custom_server_template.cfg` still overwrites `server.cfg` so your hostname, passwords, and other settings take effect.

@@ -9,12 +9,22 @@ services:
         - SOURCEMOD_VERSION=${SOURCEMOD_VERSION:-1.12}
     volumes:
       - ${CSGO_DATA_PATH:-./csgo-data}:/home/steam/csgo-dedicated/
-    network_mode: "host"
+    ports:
+      # Game (transmission, pings, RCON) – -port
+      - "${SRCDS_PORT:-27015}:${SRCDS_PORT:-27015}/tcp"
+      - "${SRCDS_PORT:-27015}:${SRCDS_PORT:-27015}/udp"
+      # SourceTV – +tv_port
+      - "${SRCDS_TV_PORT:-27020}:${SRCDS_TV_PORT:-27020}/udp"
+      # Client port – -clientport
+      - "${SRCDS_CLIENT_PORT:-27005}:${SRCDS_CLIENT_PORT:-27005}/udp"
+      # Steam (outgoing) – -sport
+      - "${SRCDS_STEAM_PORT:-26900}:${SRCDS_STEAM_PORT:-26900}/udp"
     environment:
       - SRCDS_TOKEN=${SRCDS_TOKEN}
       - SRCDS_PORT=${SRCDS_PORT:-27015}
       - SRCDS_TV_PORT=${SRCDS_TV_PORT:-27020}
       - SRCDS_CLIENT_PORT=${SRCDS_CLIENT_PORT:-27005}
+      - SRCDS_STEAM_PORT=${SRCDS_STEAM_PORT:-26900}
       - SRCDS_RCONPW=${SRCDS_RCONPW:-changeme}
       - SRCDS_PW=${SRCDS_PW:-changeme}
       - SRCDS_NET_PUBLIC_ADDRESS=${SRCDS_NET_PUBLIC_ADDRESS:-0}

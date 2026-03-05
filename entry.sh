@@ -68,6 +68,11 @@ rm -f "${STEAMAPPDIR}/bin/libgcc_s.so.1" "${STEAMAPPDIR}/${STEAMAPP}/bin/libgcc_
 if [ -z "${SRCDS_TOKEN}" ] || [ "${SRCDS_TOKEN}" = "0" ]; then
 	echo "WARNING: SRCDS_TOKEN is not set or is 0 - server will not be VAC secured and may not be joinable. Create a token at https://steamcommunity.com/dev/managegameservers with App ID 4465480 and set SRCDS_NET_PUBLIC_ADDRESS to this server's public IP if behind NAT."
 fi
+PUBLIC_ADDR="${SRCDS_NET_PUBLIC_ADDRESS:-0}"
+echo "Reporting to Steam as public address: ${PUBLIC_ADDR} (set SRCDS_NET_PUBLIC_ADDRESS to your server's public IP if VAC stays off or players cannot connect)"
+if [ -z "${SRCDS_NET_PUBLIC_ADDRESS}" ] || [ "${SRCDS_NET_PUBLIC_ADDRESS}" = "0" ]; then
+	echo "WARNING: SRCDS_NET_PUBLIC_ADDRESS is 0 or unset - set it to this machine's public IP (e.g. SRCDS_NET_PUBLIC_ADDRESS=1.2.3.4) so Steam and clients can reach the server; otherwise VAC may not activate and the server may be unjoinable."
+fi
 
 # Pass SRCDS_* env vars on command line so they override server.cfg (like CM2Walki/CSGO)
 bash "${STEAMAPPDIR}/srcds_run" -game "${STEAMAPP}" -console -autoupdate \
@@ -78,7 +83,8 @@ bash "${STEAMAPPDIR}/srcds_run" -game "${STEAMAPP}" -console -autoupdate \
 			+tickrate "${SRCDS_TICKRATE:-128}" \
 			-port "${SRCDS_PORT}" \
 			+tv_port "${SRCDS_TV_PORT}" \
-			+clientport "${SRCDS_CLIENT_PORT}" \
+			-clientport "${SRCDS_CLIENT_PORT}" \
+			-sport "${SRCDS_STEAM_PORT:-26900}" \
 			-maxplayers_override "${SRCDS_MAXPLAYERS:-14}" \
 			+game_type "${SRCDS_GAMETYPE:-0}" \
 			+game_mode "${SRCDS_GAMEMODE:-1}" \
